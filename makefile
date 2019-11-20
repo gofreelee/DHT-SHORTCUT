@@ -1,7 +1,7 @@
 all: compile
 
-compile: main.o utils.o message_controller.o dht_node.o dht_ring_thread.o hash_storage_thread.o task_thread.o base_thread.o
-	g++ -o DHT main.o utils.o message_controller.o dht_node.o dht_ring_thread.o hash_storage_thread.o task_thread.o base_thread.o -lcrypto -lpthread -g
+compile: main.o utils.o message_controller.o dht_node.o dht_ring_thread.o hash_storage_thread.o task_thread.o base_thread.o listen_thread.o
+	g++ -o DHT main.o utils.o message_controller.o dht_node.o dht_ring_thread.o hash_storage_thread.o task_thread.o listen_thread.o base_thread.o -lcrypto -lpthread -g
 
 main.o:src/main.cpp
 	g++ -c src/main.cpp -std=c++11 -g
@@ -26,3 +26,9 @@ task_thread.o:src/task_thread.cpp
 
 base_thread.o:src/base_thread.cpp
 	g++ -c src/base_thread.cpp -std=c++11 -g
+
+listen_thread.o:src/listen_thread.cpp
+	g++ -c src/listen_thread.cpp -std=c++11 -g
+
+clean:
+	rm *.o
