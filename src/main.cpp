@@ -21,7 +21,7 @@ int main(){
         show_help();
         string input;
         cout<<"->  ";
-        cin>>input;
+        getline(cin,input);
         vector<string> splited_strs;
         if(input=="create"){
             util::create_dht_ring(current_dht);
@@ -32,7 +32,8 @@ int main(){
                 current_dht->join(splited_strs[1].c_str(),atoi(splited_strs[2].c_str()));
             }
             else if(splited_strs[0]=="put"){
-                current_dht->put(atol(splited_strs[1].c_str()),splited_strs[2]);
+                Kid key=util::get_hash(splited_strs[1]);
+                current_dht->put(key,splited_strs[2]);
             }
             else if(splited_strs[0]=="get"){
                 //把key转成hash Kid的值
