@@ -24,3 +24,9 @@ bool base_thread::create_thread(){
     }
     return true;
 }
+
+base_thread::~base_thread(){}
+
+bool base_thread::exit_instance(){}
+
+bool base_thread::init_instance(){}

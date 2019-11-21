@@ -4,6 +4,8 @@
 #include"storage_value.h"
 #include"message_controller.h"
 #include"utils.h"
+#include"listen_thread.h"
+#include<iostream>
 using namespace std;
 #define MSIZE 8
 typedef long Nid;//表示节点ID.

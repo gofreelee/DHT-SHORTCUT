@@ -20,8 +20,8 @@ vector<pair<Kid,std::string>> dht_node::get_resources()const{
 
 dht_node::dht_node(){
     //节点初始化,需要初始化下
-    string ip=util::get_ip();
-    short port=util::choose_port();
+    ip=util::get_ip();
+    port=util::choose_port();
     string key_str=ip+":"+to_string(port);//ip:port　格式的字符串
     nid=util::get_hash(key_str);//将字符串hash. 作为当前主机的node id
     short_cuts=vector< pair<Nid,pair<string,int> > >(MSIZE+1);
@@ -97,7 +97,22 @@ bool dht_node::join(const char* des_ip,short des_port){
     //赋值完通知后继节点
     //c hash ip port 
     notify(successor_ip,successor_port);
-    
+    //
+    int listen_fd=socket(AF_INET,SOCK_STREAM,0);
+        if(listen_fd<0){
+            std::cout<<"创建监听线程失败"<<endl;
+            return false;
+        }
+        struct sockaddr_in curr_addr;
+        curr_addr.sin_port=port;
+        curr_addr.sin_family=AF_INET;
+        curr_addr.sin_addr.s_addr=get_current_ip();
+        if(bind(listen_fd,(struct sockaddr*)&curr_addr,sizeof(curr_addr))==-1){
+            cout<<"创建监听线程失败"<<endl;
+            return false;
+        }
+        listen_thread listen_task(this,listen_fd);
+        listen_task.create_thread();
     //下面要设置shortcut吗? 我的想法是 
 }
 

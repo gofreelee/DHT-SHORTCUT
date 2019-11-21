@@ -1,3 +1,5 @@
+#ifndef _LISTEN_THREAD_H
+#define  _LISTEN_THREAD_H
 #include"libheaders.h"
 #include"dht_node.h"
 #include"base_thread.h"
@@ -7,9 +9,11 @@ private:
     dht_node* current_node;
     int listen_socket_fd;
 public:
-     listen_thread(dht_node* _current_node,int listen_fd);     
+    listen_thread(dht_node* _current_node,int listen_fd);     
     ~listen_thread();
     virtual bool init_instance();
     virtual bool exit_instance();
     virtual bool run();
 };
+#endif
+class listen_thread;

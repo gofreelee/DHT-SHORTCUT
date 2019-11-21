@@ -1,19 +1,49 @@
 #include"../include/utils.h"
 #include"../include/listen_thread.h"
 #include<iostream>
+#include<cmath>
+#include<openssl/sha.h>
 //SHA1算法.获取对应的哈希值.
 Nid util::get_hash(std::string key){
+    unsigned char obuf[41];
+    char finalHash[41];
+    string keyHash = "";
+    int i;
+    Kid mod = pow(2,32);
 
+    
+    /* convert string to an unsigned char array because SHA1 takes unsigned char array as parameter */
+    unsigned char unsigned_key[key.length()+1];
+    for(i=0;i<key.length();i++){
+        unsigned_key[i] = key[i];
+    }
+    unsigned_key[i] = '\0';
+
+
+    SHA1(unsigned_key,sizeof(unsigned_key),obuf);
+    for (i = 0; i < 32/8; i++) {
+        sprintf(finalHash,"%d",obuf[i]);
+        keyHash += finalHash;
+    }
+
+    Kid hash = stoll(keyHash) % mod;
+
+    return hash;
 }
 
     //获取本机的ip
 std::string util::get_ip(){
-
+    return "127.0.0.1";
 }
 
     //选择一个可用的端口号．
 short util::choose_port(){
-
+    srand(time(0));
+	short choosed_port = rand() % 65536;
+    if(choosed_port<0)choosed_port=-choosed_port;
+	if(choosed_port < 1024)
+		choosed_port += 1024;
+    return choosed_port;
 }
 
     //是否当前的port正在被使用．
@@ -21,7 +51,7 @@ bool util::port_in_use(short port){
     
 }
 
-bool util::create_dht_ring( dht_node* node){
+bool util::create_dht_ring(dht_node* node){
     bool cur_status=node->get_ring_flag();
 
     if(cur_status){
@@ -38,21 +68,23 @@ bool util::create_dht_ring( dht_node* node){
         tmp_successor=tmp_precessor;
         //创建完成后需要开启一个监听线程
         //先创建本地监听套接字
-        int listen_fd=socket(AF_INET,SOCK_STREAM,0);
-        if(listen_fd<0){
-            cout<<"创建监听线程失败"<<endl;
-            return false;
-        }
-        struct sockaddr_in curr_addr;
-        curr_addr.sin_port=node->get_current_port();
-        curr_addr.sin_family=AF_INET;
-        curr_addr.sin_addr.s_addr=node->get_current_ip();
-        if(bind(listen_fd,(struct sockaddr*)&curr_addr,sizeof(curr_addr))==-1){
-            cout<<"创建监听线程失败"<<endl;
-            return false;
-        }
-        listen_thread listen_task(node,listen_fd);
-        listen_task.create_thread();
+        // int listen_fd=socket(AF_INET,SOCK_STREAM,0);
+        // if(listen_fd<0){
+        //     cout<<"创建监听线程失败"<<endl;
+        //     return false;
+        // }
+        // struct sockaddr_in curr_addr;
+        // curr_addr.sin_port=node->get_current_port();
+        // curr_addr.sin_family=AF_INET;
+        // curr_addr.sin_addr.s_addr=node->get_current_ip();
+        // if(bind(listen_fd,(struct sockaddr*)&curr_addr,sizeof(curr_addr))==-1){
+        //     cout<<"创建监听线程失败"<<endl;
+        //     return false;
+        // }
+        listen_thread* listen_task=new listen_thread(node,0);
+        listen_task->create_thread();
+        #include<iostream>
+        std::cout<<"创建线程了";
     }
 }
 
@@ -122,7 +154,7 @@ ssize_t util::absolute_recv(int fd, void *buf, size_t n){
     return n;
 }
 
-void split_string(const string& s, vector<string>& v, const string& c)
+void util::split_string(const string& s, vector<string>& v, const string& c)
  {
       string::size_type pos1, pos2;
       pos2 = s.find(c);
