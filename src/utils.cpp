@@ -66,6 +66,8 @@ bool util::create_dht_ring(dht_node* node){
         tmp_precessor.second.first=node->ip;
         tmp_precessor.second.second=node->get_current_port();
         tmp_successor=tmp_precessor;
+        node->set_predecessors(tmp_precessor);
+        node->set_successors(tmp_successor);
         //创建完成后需要开启一个监听线程
         //先创建本地监听套接字
         // int listen_fd=socket(AF_INET,SOCK_STREAM,0);
@@ -83,8 +85,6 @@ bool util::create_dht_ring(dht_node* node){
         // }
         listen_thread* listen_task=new listen_thread(node,0);
         listen_task->create_thread();
-        #include<iostream>
-        std::cout<<"创建线程了";
     }
 }
 

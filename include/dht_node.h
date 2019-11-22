@@ -29,7 +29,7 @@ public:
     bool leave();//当节点离开网络的时候需要进行的操作.
     bool stabilize();//当前节点向后继节点查询,如果后继节点的前置节点不是自己,那么将自己的后继节点改成
     void notify(const dht_node& des_node);//向目标节点通知自己的存在.
-    void notify(u_int32_t des_ip,u_int8_t des_port);
+    void notify(u_int32_t des_ip,u_int16_t des_port);
     void init_short_cuts();
     pair<Kid,pair<string,int>> choose_fit_query(Kid key)const;//
     int calculate_is_between(Kid key,Nid node_hash);//key的hash与node_hash之间的距离是多少

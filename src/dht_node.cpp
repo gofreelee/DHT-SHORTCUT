@@ -29,12 +29,7 @@ dht_node::dht_node(){
 //
 u_int32_t dht_node::get_successors_ip(){
     string ip_string=successors.second.first;
-    char tmp_ip_ctr[ip_string.size()+1];
-    for(int i=0;i<ip_string.size();i++){
-        if(i==ip_string.size()) tmp_ip_ctr[i]='\0';
-        else tmp_ip_ctr[i]=ip_string[i];//有待检查
-    }
-    return inet_addr(tmp_ip_ctr);
+    return inet_addr(ip_string.c_str());
 }
 
 u_int16_t dht_node::get_successors_port(){
@@ -42,26 +37,16 @@ u_int16_t dht_node::get_successors_port(){
 }
 
 u_int32_t dht_node::get_predecessors_ip(){
-    string ip_string=predecessors.second.first;
-    char tmp_ip_ctr[ip_string.size()+1];
-    for(int i=0;i<ip_string.size();i++){
-        if(i==ip_string.size()) tmp_ip_ctr[i]='\0';
-        else tmp_ip_ctr[i]=ip_string[i];//有待检查
-    }
-    return inet_addr(tmp_ip_ctr);
+    
+    return inet_addr(predecessors.second.first.c_str());
 }
 
 u_int16_t dht_node::get_predecessors_port(){
     return predecessors.second.second;
 }
 
-u_int32_t dht_node::get_current_ip(){
-    char tmp_ip_ctr[ip.size()+1];
-    for(int i=0;i<ip.size();i++){
-        if(i==ip.size()) tmp_ip_ctr[i]='\0';
-        else tmp_ip_ctr[i]=ip[i];//有待检查
-    }
-    return inet_addr(tmp_ip_ctr);
+u_int32_t dht_node::get_current_ip(){    
+    return inet_addr(ip.c_str());
 }
 
 //join()函数
@@ -74,17 +59,19 @@ bool dht_node::join(const char* des_ip,short des_port){
     int join_length=8+1+sizeof(addr.sin_addr.s_addr)+sizeof(addr.sin_port);
     uint8_t* join_send_buf=(u_int8_t*)malloc(join_length);
     *join_send_buf='j';
-    *((u_int64_t*)(join_send_buf+1))=nid;
+    *((long*)(join_send_buf+1))=nid;
+    cout<<"send nid:"<<nid;
     *((uint32_t*)(join_send_buf+9))=get_current_ip();
     *((u_int16_t*)(join_send_buf+9+sizeof(addr.sin_addr.s_addr)))=port;
     messager.send((char*)join_send_buf,join_length);//发送请求加入的消息了
 
     uint8_t* recv_successor_buf=(u_int8_t*)malloc(join_length-1);
-    messager.recv((char*)recv_successor_buf,join_length-1);
+    int debug_length=messager.recv((char*)recv_successor_buf,join_length-1);
     //现在拿到了successors的东西了
-    long successor_hash=*((uint64_t*)recv_successor_buf);//后继的hash值
-    uint32_t successor_ip=*((uint32_t*)recv_successor_buf+8);//后继的ip
-    uint16_t successor_port=*((uint16_t*)recv_successor_buf+12);//后继的port
+    long successor_hash=*((long*)recv_successor_buf);//后继的hash值
+    uint32_t successor_ip=*((uint32_t*)(recv_successor_buf+8));//后继的ip
+    uint16_t successor_port=*((uint16_t*)(recv_successor_buf+12));//后继的port
+    cout<<"hash"<<successor_hash<<" ip: "<<successor_ip<<" port: "<<successor_port;
     //下面完成对后继节点的赋值,要加锁
     extern pthread_mutex_t successor_info_mutex;
     pthread_mutex_lock(&successor_info_mutex);
@@ -98,25 +85,25 @@ bool dht_node::join(const char* des_ip,short des_port){
     //c hash ip port 
     notify(successor_ip,successor_port);
     //
-    int listen_fd=socket(AF_INET,SOCK_STREAM,0);
-        if(listen_fd<0){
-            std::cout<<"创建监听线程失败"<<endl;
-            return false;
-        }
-        struct sockaddr_in curr_addr;
-        curr_addr.sin_port=port;
-        curr_addr.sin_family=AF_INET;
-        curr_addr.sin_addr.s_addr=get_current_ip();
-        if(bind(listen_fd,(struct sockaddr*)&curr_addr,sizeof(curr_addr))==-1){
-            cout<<"创建监听线程失败"<<endl;
-            return false;
-        }
-        listen_thread listen_task(this,listen_fd);
-        listen_task.create_thread();
+    // int listen_fd=socket(AF_INET,SOCK_STREAM,0);
+    //     if(listen_fd<0){
+    //         std::cout<<"创建监听线程失败"<<endl;
+    //         return false;
+    //     }
+    //     struct sockaddr_in curr_addr;
+    //     curr_addr.sin_port=port;
+    //     curr_addr.sin_family=AF_INET;
+    //     curr_addr.sin_addr.s_addr=get_current_ip();
+    //     if(bind(listen_fd,(struct sockaddr*)&curr_addr,sizeof(curr_addr))==-1){
+    //         cout<<"创建监听线程失败"<<endl;
+    //         return false;
+    //     }
+        listen_thread* listen_task=new listen_thread(this,0);
+        listen_task->create_thread();
     //下面要设置shortcut吗? 我的想法是 
 }
 
-void dht_node::notify(u_int32_t successor_ip,u_int8_t successor_port){
+void dht_node::notify(u_int32_t successor_ip,u_int16_t successor_port){
     in_addr successor_addr;
     in_addr current_addr;
     successor_addr.s_addr=successor_ip;
@@ -127,7 +114,7 @@ void dht_node::notify(u_int32_t successor_ip,u_int8_t successor_port){
     sizeof(addr.sin_port));
     //设置发送的消息
     *notify_buf='c';//change 表示 
-    *((u_int64_t*)(notify_buf+1))=nid;
+    *((long*)(notify_buf+1))=nid;
     *((u_int32_t*)(notify_buf+1+8))=inet_addr(ip.c_str());
     *((u_int16_t*)(notify_buf+13))=port;
     messager.send((char*)notify_buf,9+sizeof(addr.sin_addr.s_addr)+
@@ -303,3 +290,12 @@ void dht_node::push_resource(pair<Kid,std::string> new_resource){
     resoures.push_back(new_resource);
     return;
 }
+
+void dht_node::set_successors(const pair<Nid,pair<string,int>>& res_successors){
+    this->successors=res_successors;
+}
+
+void dht_node::set_predecessors(const pair<Nid,pair<string,int>>& res_predecessors){
+    this->predecessors=res_predecessors;
+}
+

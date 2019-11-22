@@ -47,17 +47,33 @@ size_t message_controller::send(char* buf,size_t message_size){
 }
 
 size_t message_controller::recv(char* buf,size_t message_size){
-    int recv_size;
-    while(true){
-        recv_size=::recv(socket_fd,buf,message_size,0);
-        if(recv_size<0){
+    char* tmp_buf=(char*)buf;
+    int index=0;
+    int counter=0;
+    int ret;
+    while(index!=message_size){
+        ret=::recv(socket_fd,buf,message_size,0);
+        if(ret==-1){
             if(errno==EINTR){
                 continue;
             }
-            else return -1;
+            else {
+                std::cout<<"error: 接受数据错误"<<std::endl;
+                return -1;
+            }
         }
-        return recv_size;
+        else if(ret==0){
+            std::cout<<"warning:对端关闭了连接"<<std::endl;
+            ::close(socket_fd);
+            return counter;
+        }
+        else {
+            counter+=ret;
+            tmp_buf=tmp_buf+ret;
+            index+=ret;
+        }
     }
+    return message_size;
 }
 
 //设置套接字

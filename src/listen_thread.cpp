@@ -22,6 +22,7 @@ bool listen_thread::init_instance(){
     struct sockaddr_in addr;
     addr.sin_family=AF_INET;
     addr.sin_port=htons(current_node->port);
+    cout<<current_node->port<<"  "<<addr.sin_port;
     //inet_addr函数需要的 const char*
     //因此需要把string转到char* 里
 
@@ -31,6 +32,7 @@ bool listen_thread::init_instance(){
     //     else current_node_ip[i]=current_node->ip[i];
     // }
     addr.sin_addr.s_addr=current_node->get_current_ip();
+    cout<<current_node->get_current_ip()<<" "<<inet_addr("127.0.0.1");
     //free(current_node_ip);
 
     //绑定端口号.
