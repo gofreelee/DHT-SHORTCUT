@@ -12,7 +12,7 @@ bool dht_ring_thread::run(){
     struct sockaddr_in new_node_addr;//变量声明位置有待考虑.
     if(absolute_recv(client_fd,&type,1)==1){
         if(type==JOIN){
-            cout<<"JOIN";
+            //cout<<"JOIN";
             //当第一个字符是J时,表示有个节点想要通过当前这个节点加入到整个环中
             long node_hash;
             if( absolute_recv( client_fd, &node_hash, 8) == 8 ) {
@@ -31,8 +31,8 @@ bool dht_ring_thread::run(){
                        *((long*)sendbuf)=current_node->get_successors().first;
                        *((uint32_t*)(sendbuf+8))=current_node->get_successors_ip();
                        *((u_int16_t*)(sendbuf+8+sizeof(new_node_addr.sin_addr.s_addr)))=current_node->get_successors_port();
-                       cout<<"发回去的信息是:"<<"ip:"<<*((uint32_t*)(sendbuf+8))<<" port:"
-                       <<*((u_int16_t*)(sendbuf+8+sizeof(new_node_addr.sin_addr.s_addr)));
+                       //cout<<"发回去的信息是:"<<"ip:"<<*((uint32_t*)(sendbuf+8))<<" port:"
+                       //<<*((u_int16_t*)(sendbuf+8+sizeof(new_node_addr.sin_addr.s_addr)));
                        absolute_send(client_fd,sendbuf,sendbuf_length); 
                        free(sendbuf);
                        //是否此时关闭client_fd? todo                     
@@ -48,7 +48,7 @@ bool dht_ring_thread::run(){
                        *((uint32_t*)(forward_send_buf+9))=new_node_addr.sin_addr.s_addr;
                        *((u_int16_t*)(forward_send_buf+9+sizeof(new_node_addr.sin_addr.s_addr)))
                        =new_node_addr.sin_port;
-                       cout<<"for ward发回去的信息是:"<<"ip:"<<new_node_addr.sin_addr.s_addr<<" port:"<<new_node_addr.sin_port;
+                      // cout<<"for ward发回去的信息是:"<<"ip:"<<new_node_addr.sin_addr.s_addr<<" port:"<<new_node_addr.sin_port;
                        //注意,这里要向下个后继发消息,
                        message_controller forward_message(current_node->get_successors_port(),current_node->get_successors_ip());
                        forward_message.send((char*)forward_send_buf,forward_length);
@@ -93,7 +93,7 @@ bool dht_ring_thread::run(){
                    }
                }
                else {
-                   cout<<"here:"<<node_hash;
+                   //cout<<"here:"<<node_hash;
                    //等于的情况,就把自己发给新节点 hhhh
                    int sendbuf_length=8+sizeof(new_node_addr.sin_addr.s_addr)+sizeof(new_node_addr.sin_port);
                    u_int8_t* sendbuf=(u_int8_t*)malloc(sendbuf_length*sizeof(char));
@@ -107,7 +107,7 @@ bool dht_ring_thread::run(){
                }
             }
             else {
-                cout<<"error?";
+                //cout<<"error?";
                 return false;
                 }
 
@@ -218,7 +218,7 @@ bool dht_ring_thread::run(){
             pre_hash=current_node->get_predecessors().first;//前继节点的hash
             pre_ip=current_node->get_predecessors_ip();
             pre_port=current_node->get_predecessors_port();
-            cout<<"前置节点:"<<pre_hash<<" "<<pre_ip<<" "<<pre_port;
+            cout<<"我发给你的原来的前置节点:"<<pre_hash<<" "<<pre_ip<<" "<<pre_port;
             (*(long*)back_curr_preinfo)=pre_hash;
             (*(uint32_t*)(back_curr_preinfo+8))=pre_ip;
             (*(uint16_t*)(back_curr_preinfo+12))=pre_port;
@@ -321,7 +321,7 @@ ssize_t dht_ring_thread::absolute_send(int client_socket,void* buf,size_t length
     int size=length;
       while(size>0){
           int send_length=send(client_socket,buf,length,0);
-          cout<<"向缓冲区写入了一次数据"<<endl;
+          //cout<<"向缓冲区写入了一次数据"<<endl;
           size-=send_length;
           buf=buf+send_length;
       }

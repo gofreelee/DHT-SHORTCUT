@@ -44,7 +44,7 @@ bool listen_thread::init_instance(){
         std::cout<<"error:监听失败"<<std::endl;
         return false;
     }
-    std::cout<<"绑定成功"<<endl;
+    //std::cout<<"绑定成功"<<endl;
     return true;
 }
 

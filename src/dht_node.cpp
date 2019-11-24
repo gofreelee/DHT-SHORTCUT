@@ -71,7 +71,7 @@ bool dht_node::join(const char* des_ip,short des_port){
     long successor_hash=*((long*)recv_successor_buf);//后继的hash值
     uint32_t successor_ip=*((uint32_t*)(recv_successor_buf+8));//后继的ip
     uint16_t successor_port=*((uint16_t*)(recv_successor_buf+12));//后继的port
-    cout<<"hash"<<successor_hash<<" ip: "<<successor_ip<<" port: "<<successor_port;
+   // cout<<"hash"<<successor_hash<<" ip: "<<successor_ip<<" port: "<<successor_port;
     //下面完成对后继节点的赋值,要加锁
     extern pthread_mutex_t successor_info_mutex;
     pthread_mutex_lock(&successor_info_mutex);
@@ -125,6 +125,7 @@ void dht_node::notify(u_int32_t successor_ip,u_int16_t successor_port){
     Nid pre_hash=*((Nid*)back_curr_preinfo);
     uint32_t pre_ip=*((uint32_t*)(back_curr_preinfo+8));
     uint16_t pre_port=*((uint16_t*)(back_curr_preinfo+12));
+    std::cout<<"当前后继的原前置是 ip: "<<pre_ip<<"port: "<<pre_port;
     struct in_addr pre_addr;
     pre_addr.s_addr=pre_ip;
     //改下自己当前前置节点的信息

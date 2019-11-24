@@ -37,7 +37,7 @@ int main(){
             cout<<"\n->  当前主机的前置节点网络地址为ip:"<<current_dht->get_predecessors().second.first
             <<" 端口: "<<current_dht->get_predecessors().second.second<<endl;
             cout<<"\n->  当前主机的后继节点网络地址为ip:"<<current_dht->get_successors().second.first
-            <<" 端口: "<<current_dht->get_predecessors().second.second<<endl;
+            <<" 端口: "<<current_dht->get_successors().second.second<<endl;
         }
         else{
             util::split_string(input,splited_strs," ");
