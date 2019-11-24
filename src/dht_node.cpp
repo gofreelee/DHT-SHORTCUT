@@ -184,7 +184,8 @@ void dht_node::set_successors(uint32_t suc_ip,uint16_t suc_port,Nid suc_hash){
 }
 
 pair<Kid,pair<string,int>> dht_node::choose_fit_query(Kid key)const{
-     //选择最接近key的节点.能进入这个函数说明自己本身已经没有这个资源了.    
+     //选择最接近key的节点.能进入这个函数说明自己本身已经没有这个资源了.
+     return successors;    
 }
 
 string dht_node::get(Kid key)const{

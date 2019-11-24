@@ -1,7 +1,7 @@
 #include"../include/libheaders.h"
 #include"../include/message_controller.h"
 #include<iostream>
-
+#include<string.h>
 
 message_controller:: message_controller(short _port,const char* _ip){
     socket_fd=socket(AF_INET,SOCK_STREAM,0);
@@ -58,6 +58,7 @@ size_t message_controller::recv(char* buf,size_t message_size){
                 continue;
             }
             else {
+                std::cout<<strerror(errno);
                 std::cout<<"error: 接受数据错误"<<std::endl;
                 return -1;
             }

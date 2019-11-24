@@ -1,8 +1,10 @@
 #include"../include/dht_ring_thread.h"
 #include<iostream>
+#include<string.h>
 dht_ring_thread::dht_ring_thread(int _client_fd,dht_node* _current_node){
         client_fd=_client_fd;
         current_node=_current_node;
+        CLOSE_FD=true;
 }
 bool dht_ring_thread::run(){
     //从client_fd中读取一个字节
@@ -253,7 +255,7 @@ bool dht_ring_thread::run(){
             current_node->set_predecessors(pre_ip,pre_port,node_hash);
             pthread_mutex_unlock(&precessor_mutex);
         }
-        else if(type==SUC_LEAVE){
+        else if(type == SUC_LEAVE){
             Nid node_hash;
             absolute_recv(client_fd,&node_hash,sizeof(Nid));
             uint32_t suc_ip;
@@ -266,14 +268,16 @@ bool dht_ring_thread::run(){
             pthread_mutex_unlock(&successor_info_mutex);
         }
         else if(type==PUT){
-            hash_storage_thread hash_storage_task(client_fd,current_node);
-            hash_storage_task.type=PUT;
-            hash_storage_task.create_thread();
+            CLOSE_FD=false;
+            hash_storage_thread* hash_storage_task=new hash_storage_thread(client_fd,current_node);
+            hash_storage_task->type = PUT;
+            hash_storage_task->create_thread();
         }
         else if(type==GET){
-            hash_storage_thread hash_storage_task(client_fd,current_node);
-            hash_storage_task.type=GET;
-            hash_storage_task.create_thread();
+            CLOSE_FD=false;
+            hash_storage_thread* hash_storage_task=new hash_storage_thread(client_fd,current_node);
+            hash_storage_task->type = GET;
+            hash_storage_task->create_thread();
         }
     }
     else {
@@ -294,6 +298,7 @@ ssize_t dht_ring_thread::absolute_recv(int fd, void *buf, size_t n){
                 continue;
             }
             else {
+                std::cout<<strerror(errno);
                 std::cout<<"error: 接受数据错误"<<std::endl;
                 return -1;
             }
@@ -321,4 +326,8 @@ ssize_t dht_ring_thread::absolute_send(int client_socket,void* buf,size_t length
           buf=buf+send_length;
       }
       return length;
+}
+
+dht_ring_thread::~dht_ring_thread(){
+    
 }

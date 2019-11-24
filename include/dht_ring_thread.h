@@ -14,8 +14,10 @@ public:
     static const char SUC_LEAVE = 'L';//当前的后继节点离开了
     static const char PUT='p';
     static const char GET='g';
+    bool CLOSE_FD;
     virtual bool run();
     dht_ring_thread(){}
+    virtual ~dht_ring_thread();
     dht_ring_thread(int _client_fd,dht_node* _current_node);
     //完全收取,确保能够读完__n字节的数据
     ssize_t absolute_recv(int fd, void *buf, size_t n);

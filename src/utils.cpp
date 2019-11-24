@@ -1,6 +1,7 @@
 #include"../include/utils.h"
 #include"../include/listen_thread.h"
 #include<iostream>
+#include<string.h>
 #include<cmath>
 #include<openssl/sha.h>
 //SHA1算法.获取对应的哈希值.
@@ -136,6 +137,7 @@ ssize_t util::absolute_recv(int fd, void *buf, size_t n){
                 continue;
             }
             else {
+                std::cout<<fd<<strerror(errno);
                 std::cout<<"error: 接受数据错误"<<std::endl;
                 return -1;
             }

@@ -9,6 +9,7 @@ class task_thread: public base_thread{
 protected:
     dht_node* current_node;//工作线程也需要持有
     int client_fd;
+    bool CLOSE_FD;
 public:
     task_thread(int _client_fd,dht_node* _current_node);
     task_thread(){};

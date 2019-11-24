@@ -12,8 +12,8 @@ bool task_thread::init_instance(){
 }
 
 bool task_thread::exit_instance(){
-        close(client_fd);
-         return true;
+        if(CLOSE_FD)close(client_fd);
+        return true;
 }
 
 task_thread::~task_thread(){

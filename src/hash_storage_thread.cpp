@@ -7,13 +7,16 @@ hash_storage_thread::hash_storage_thread(int _client_fd,dht_node* _current_node)
 hash_query hash_storage_thread::query_curr_table(Kid key){
     struct hash_query query_result;
     vector<pair<Kid,std::string>> curr_resource=current_node->get_resources();
+    cout<<"进入查询当前资源";
     for(int i=0;i<curr_resource.size();i++){
         if(curr_resource[i].first==key){
             query_result.is_contain=true;
             query_result.value=curr_resource[i].second;
+            cout<<"已查询到"<<endl;
             return query_result;
         }
     }
+    cout<<"未查询到";
     query_result.is_contain=false;
     return query_result;
 }
@@ -65,9 +68,12 @@ void hash_storage_thread::deal_put(){
     //消息格式:p Kid int value
     Kid key;
     int length;
+    cout<<"接受key"<<endl;
     util::absolute_recv(client_fd,&key,sizeof(Kid));//key值
+    cout<<"接受length"<<endl;
     util::absolute_recv(client_fd,&length,sizeof(int));//value的长度
     char* value=(char*)malloc(sizeof(char)*length);
+    cout<<"接受value"<<endl;
     util::absolute_recv(client_fd,value,length);
     //判断一下这个hash和当前节点的关系
     extern pthread_mutex_t successor_info_mutex;
