@@ -36,7 +36,30 @@ Nid util::get_hash(std::string key)
 //获取本机的ip
 std::string util::get_ip()
 {
-    return "127.0.0.1";
+    char *host;
+    struct ifaddrs *addrs, *tmp_node;
+    if (getifaddrs(&addrs) == -1)
+    {
+        return NULL;
+    }
+    for (tmp_node = addrs; tmp_node != NULL; tmp_node = tmp_node->ifa_next)
+    {
+        if (tmp_node->ifa_addr == NULL)
+            continue;
+        if (!strcmp(tmp_node->ifa_name, "lo"))
+            continue;
+
+        if (tmp_node->ifa_addr->sa_family == AF_INET)
+        {
+            if (NULL == (host = (char *)malloc(1024)))
+                return NULL;
+            int result = getnameinfo(tmp_node->ifa_addr,sizeof(struct sockaddr_in), host,1024,NULL,0,1);
+            if(result != 0)
+                return NULL;
+            return host;
+        }
+    }
+    return NULL;
 }
 
 //选择一个可用的端口号．

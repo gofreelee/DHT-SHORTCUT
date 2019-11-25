@@ -9,6 +9,8 @@
 #include<arpa/inet.h>
 #include<unistd.h>
 #include<pthread.h>
+#include<ifaddrs.h>
+#include<netdb.h>
 struct  hash_query
 {
     bool is_contain;
