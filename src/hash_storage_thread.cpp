@@ -46,6 +46,7 @@ void hash_storage_thread::deal_get()
     {
         //包含数据,发回去 回去的格式  int string
         int length = query_result.value.size();
+        cout<<"我发给你的数据:"<<query_result.value<<"长度"<<length;
         util::absolute_send(client_fd, &length, sizeof(int));
         util::absolute_send(client_fd, (void *)(query_result.value.c_str()), length);
     }

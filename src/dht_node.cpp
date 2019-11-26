@@ -1,4 +1,5 @@
 #include "../include/dht_node.h"
+#include <iostream>
 Nid dht_node::get_nid() const
 {
     return nid;
@@ -73,7 +74,7 @@ bool dht_node::join(const char *des_ip, short des_port)
     uint8_t *join_send_buf = (u_int8_t *)malloc(join_length);
     *join_send_buf = 'j';
     *((long *)(join_send_buf + 1)) = nid;
-    cout << "send nid:" << nid;
+    //cout << "send nid:" << nid;
     *((uint32_t *)(join_send_buf + 9)) = get_current_ip();
     *((u_int16_t *)(join_send_buf + 9 + sizeof(addr.sin_addr.s_addr))) = port;
     messager.send((char *)join_send_buf, join_length); //发送请求加入的消息了
@@ -139,7 +140,7 @@ void dht_node::notify(u_int32_t successor_ip, u_int16_t successor_port)
     Nid pre_hash = *((Nid *)back_curr_preinfo);
     uint32_t pre_ip = *((uint32_t *)(back_curr_preinfo + 8));
     uint16_t pre_port = *((uint16_t *)(back_curr_preinfo + 12));
-    std::cout << "当前后继的原前置是 ip: " << pre_ip << "port: " << pre_port;
+    //std::cout << "当前后继的原前置是 ip: " << pre_ip << "port: " << pre_port;
     struct in_addr pre_addr;
     pre_addr.s_addr = pre_ip;
     //改下自己当前前置节点的信息
@@ -173,7 +174,7 @@ bool dht_node::leave()
     *((uint32_t *)(pre_leave_info_buf + 9)) = inet_addr(predecessors.second.first.c_str());
     *((uint32_t *)(suc_leave_info_buf + 9)) = inet_addr(successors.second.first.c_str());
     *((uint16_t *)(pre_leave_info_buf + 13)) = predecessors.second.second;
-    *((uint16_t *)(pre_leave_info_buf + 13)) = predecessors.second.second;
+    *((uint16_t *)(suc_leave_info_buf + 13)) = successors.second.second;
     messager.set_socketfd(successors.second.second, successors.second.first.c_str());
     messager.send((char *)pre_leave_info_buf, 1 + sizeof(Nid) + sizeof(uint32_t) + sizeof(uint16_t));
     messager.close_fd();
@@ -232,8 +233,9 @@ string dht_node::get(Kid key) const
     queryer.send((char *)send_buf, sizeof(char) + sizeof(Kid)); //向别的节点查询
     int value_length;
     queryer.recv((char *)(&value_length), sizeof(int));
-    char *value = (char *)malloc(sizeof(char) * value_length);
+    char *value = (char *)malloc(sizeof(char) * value_length + 1);
     queryer.recv(value, value_length);
+    *(value+value_length) = '\0';
     queryer.close_fd();
     return value;
 }
@@ -271,6 +273,7 @@ void dht_node::put(Kid key, string value)
             {
                 *((char *)(send_buf + 1 + sizeof(Kid) + sizeof(int) + i)) = value_str[i];
             }
+            //cout<<"所发送的字符串是:"<<((char *)(send_buf + 1 + sizeof(Kid) + sizeof(int)));
             //把消息放到缓冲区后发送
             putvaluer.send((char *)send_buf, sizeof(char) + sizeof(int) + sizeof(Kid) + value.size() * sizeof(char));
             putvaluer.close_fd();

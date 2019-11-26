@@ -9,7 +9,7 @@ task_thread::task_thread(int _client_fd, dht_node *_current_node)
 
 bool task_thread::init_instance()
 {
-        std::cout << "开始任务线程处理 " << std::endl;
+        //std::cout << "开始任务线程处理 " << std::endl;
         return true;
 }
 

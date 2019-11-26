@@ -210,10 +210,6 @@ bool dht_ring_thread::run()
                 *((long *)sendbuf) = current_node->get_nid();
                 *((uint32_t *)(sendbuf + 8)) = current_node->get_current_ip();
                 *((u_int16_t *)(sendbuf + 8 + sizeof(new_node_addr.sin_addr.s_addr))) = current_node->port;
-                for (int i = 0; i < 14; i++)
-                {
-                    cout << sendbuf[i];
-                }
                 absolute_send(client_fd, sendbuf, sendbuf_length);
                 free(sendbuf);
             }
@@ -235,7 +231,7 @@ bool dht_ring_thread::run()
             pre_hash = current_node->get_predecessors().first; //前继节点的hash
             pre_ip = current_node->get_predecessors_ip();
             pre_port = current_node->get_predecessors_port();
-            cout << "我发给你的原来的前置节点:" << pre_hash << " " << pre_ip << " " << pre_port;
+            //cout << "我发给你的原来的前置节点:" << pre_hash << " " << pre_ip << " " << pre_port;
             (*(long *)back_curr_preinfo) = pre_hash;
             (*(uint32_t *)(back_curr_preinfo + 8)) = pre_ip;
             (*(uint16_t *)(back_curr_preinfo + 12)) = pre_port;

@@ -10,10 +10,11 @@ void show_help()
 {
     cout << "1) create : 创建\n\n";
     cout << "2) join <ip> <port> : 将通过指定的节点加入一个集群中\n\n";
-    cout << "3) put <key> <value> : will put key and value to the node it belongs to\n\n";
-    cout << "4) get <key> : will get value of mentioned key\n\n";
+    cout << "3) put <key> <value> : 将会向分布式哈希表中增加一个数据\n\n";
+    cout << "4) get <key> : 将会获得key所对应的value\n\n";
     cout << "5) info : 获取当前的ip与port\n\n";
-    cout << "5) ls : 列出当前主机的前置节点与后继节点\n\n";
+    cout << "6) ls : 列出当前主机的前置节点与后继节点\n\n";
+    cout << "7) leave : 离开集群\n\n";
 }
 int main()
 {
@@ -45,6 +46,10 @@ int main()
             cout << "\n->  当前主机的后继节点网络地址为ip:" << current_dht->get_successors().second.first
                  << " 端口: " << current_dht->get_successors().second.second << endl;
         }
+        else if (input == "leave")
+        {
+            current_dht->leave();
+        }
         else
         {
             util::split_string(input, splited_strs, " ");
@@ -73,5 +78,6 @@ int main()
             }
         }
         cout << endl;
+
     }
 }
