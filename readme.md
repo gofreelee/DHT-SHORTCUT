@@ -7,7 +7,7 @@
 ### create
 DHT在创建时,当前的环中只有一个节点--即初始节点.该节点的前置节点与后继节点均为自己本身. 
 
-![avatar]/pic/create.png
+![avatar](/pic/create.png)
 ### join 
 在程序中执行如下指令:join <ip> <port> 可通过ip:port所标识的对应主机的进程来加入集群.
 
