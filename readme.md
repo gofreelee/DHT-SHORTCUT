@@ -11,14 +11,20 @@ DHT在创建时,当前的环中只有一个节点--即初始节点.该节点的�
 ### join 
 在程序中执行如下指令:join <ip> <port> 可通过ip:port所标识的对应主机的进程来加入集群.
 
+![avatar](/pic/join.png)
 ### put 
 在程序中执行如下命令: put <key> <value> 会将该键值对存储到最适合它的主机上.
 
+![avatar](/pic/put.png)
 ### get
 在程序中执行如下命令: get <key> 会从集群中获取该key所对应的value
 
+![avatar](/pic/get.png)
 ### info
 在程序中执行如下命令: info 会获取当前节点自身的信息
 
+![avatar](/pic/info.png)
 ### ls
 在程序中执行如下命令: ls 会获取当前节点的前置节点信息与后继节点信息
+
+![avatar](/pic/ls.png)
