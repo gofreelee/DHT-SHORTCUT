@@ -44,7 +44,7 @@ public:
     vector<pair<Kid, std::string>> get_resources() const;
     // map<Kid,storaged_value> get_resources();
     vector<pair<Nid, pair<string, int>>> get_short_cuts() const;
-
+    void set_short_cuts(vector<pair<Nid, pair<string, int>>> _hort_cuts);
     u_int32_t get_successors_ip();
     u_int32_t get_predecessors_ip();
     u_int32_t get_current_ip();
@@ -58,7 +58,6 @@ public:
     void set_predecessors(const pair<Nid, pair<string, int>> &res_predecessors);
     void set_predecessors(uint32_t pre_ip, uint16_t pre_port, Nid pre_hash);
     void set_resources(const map<Kid, storaged_value> &res_resources);
-    void set_short_cuts(const vector<pair<Nid, pair<string, int>>> &res_short_cuts);
     void set_ring_flag(bool flag);
 };
 #endif

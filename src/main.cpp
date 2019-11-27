@@ -15,6 +15,7 @@ void show_help()
     cout << "5) info : 获取当前的ip与port\n\n";
     cout << "6) ls : 列出当前主机的前置节点与后继节点\n\n";
     cout << "7) leave : 离开集群\n\n";
+    cout << "8) shortcut <ip1> <port1> <ip2> <port2> : 配置shortcut\n\n";
 }
 int main()
 {
@@ -71,6 +72,19 @@ int main()
                 string value = current_dht->get(util::get_hash(splited_strs[1]));
                 cout << endl;
                 cout << "->  " << value;
+            }
+            else if (splited_strs[0] == "shortcut")
+            {
+                vector<pair<Nid, pair<string, int>>> shortcuts;
+                for(int i=1; i <= splited_strs.size()-2;i = i+2)
+                {
+                    pair<Nid, pair<string, int>> tmp;
+                    tmp.first = util::get_hash(splited_strs[i]);
+                    tmp.second.first = splited_strs[i];
+                    tmp.second.second = atoi(splited_strs[i+1].c_str());
+                    shortcuts.push_back(tmp);
+                }
+                current_dht->set_short_cuts(shortcuts);
             }
             else
             {

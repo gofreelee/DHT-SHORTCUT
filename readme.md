@@ -28,6 +28,10 @@ DHT在创建时,当前的环中只有一个节点--即初始节点.该节点的�
 在程序中执行如下命令: ls 会获取当前节点的前置节点信息与后继节点信息
 
 ![avatar](/pic/ls.png)
+### shortcut
+在程序中执行如下命令: shortcut <ip1> <port1> <ip2> <port2> 会配置当前节点的shortcuts
+
+![avatar](/pic/shortcut.png)
 ### leave
 在程序中执行如下命令: leave 会离开当前所在集群
 

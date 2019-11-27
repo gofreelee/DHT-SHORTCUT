@@ -330,3 +330,11 @@ void dht_node::set_predecessors(const pair<Nid, pair<string, int>> &res_predeces
 {
     this->predecessors = res_predecessors;
 }
+
+void dht_node::set_short_cuts(vector<pair<Nid, pair<string, int>>> _short_cuts)
+{
+    for(int i=0 ;i < _short_cuts.size(); i++)
+    {
+        short_cuts.push_back(_short_cuts[i]);
+    }
+}
